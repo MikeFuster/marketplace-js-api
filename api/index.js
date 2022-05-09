@@ -80,7 +80,7 @@ app.get("/api/:tenantId/integrations", async (req, res) => {
 app.get("/api/:integrationId/:tenantId/installUrl", async (req, res) => {
   const INTEGRATION_ID = req.params.integrationId;
   const TENANT_ID = req.params.tenantId;
-  const HOST = req.headers.host;
+  const HOST = req.headers["x-vercel-deployment-url"];
   const PROTOCOL = req.secure ? "https://" : "http://";
 
   try {
