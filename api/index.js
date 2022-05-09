@@ -27,7 +27,7 @@ app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "/public/index.html"));
 });
 
-app.get("/:tenantId/integrations", async (req, res) => {
+app.get("/api/:tenantId/integrations", async (req, res) => {
   const TENANT_ID = req.params.tenantId;
   try {
     // Returns a list of all integrations in your Fusebit  account
@@ -77,7 +77,7 @@ app.get("/:tenantId/integrations", async (req, res) => {
   }
 });
 
-app.get("/:integrationId/:tenantId/installUrl", async (req, res) => {
+app.get("/api/:integrationId/:tenantId/installUrl", async (req, res) => {
   const INTEGRATION_ID = req.params.integrationId;
   const TENANT_ID = req.params.tenantId;
   const HOST = req.headers.host;
@@ -109,7 +109,7 @@ app.get("/:integrationId/:tenantId/installUrl", async (req, res) => {
   }
 });
 
-app.get("/:integrationId/callback", async (req, res) => {
+app.get("/api/:integrationId/callback", async (req, res) => {
   const INTEGRATION_ID = req.params.integrationId;
   const SESSION_ID = req.query.session;
 
@@ -135,7 +135,7 @@ app.get("/:integrationId/callback", async (req, res) => {
   }
 });
 
-app.delete("/:integrationId/:tenantId/install", async (req, res) => {
+app.delete("/api/:integrationId/:tenantId/install", async (req, res) => {
   // Update this with your preferred data storage
   const INTEGRATION_ID = req.params.integrationId;
   const TENANT_ID = req.params.tenantId;
