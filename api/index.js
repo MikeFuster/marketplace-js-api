@@ -8,12 +8,7 @@ const axios = require("axios").default;
 // Initialize Express
 const app = express();
 
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-  })
-);
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Get a token by creating an app in the `Your Applications` section inside any integration
