@@ -20,7 +20,7 @@ const FUSEBIT_BASE_URL =
 
 // Create GET request
 app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname, "/pages/index.html"));
+  res.sendFile(path.join(__dirname, "/public/index.html"));
 });
 
 app.get("/:tenantId/integrations", async (req, res) => {
