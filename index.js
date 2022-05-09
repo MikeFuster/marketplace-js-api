@@ -1,5 +1,6 @@
 // Add Express
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const axios = require("axios").default;
@@ -18,8 +19,8 @@ const FUSEBIT_BASE_URL =
   "https://api.us-west-1.on.fusebit.io/v2/account/acc-3113066b371c48b4/subscription/sub-e0d98cb85ad64f24";
 
 // Create GET request
-app.get("/", (req, res) => {
-  res.send("Express on Vercel");
+app.get("/", function (req, res) {
+  res.sendFile(path.join(__dirname, "/pages/index.html"));
 });
 
 app.get("/:tenantId/integrations", async (req, res) => {
