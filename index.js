@@ -96,6 +96,7 @@ app.get("/:integrationId/:tenantId/installUrl", async (req, res) => {
         },
       }
     );
+    console.log(response.data);
     res.status(200);
     res.send(response.data);
   } catch (e) {
