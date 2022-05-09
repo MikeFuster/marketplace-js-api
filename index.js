@@ -30,7 +30,6 @@ app.get("/:tenantId/integrations", async (req, res) => {
     const integrationsData = await axios.get(
       `${FUSEBIT_BASE_URL}/integration`,
       {
-        method: "GET",
         headers: {
           Authorization: `Bearer ${TOKEN}`,
           "Content-Type": "application/json; charset=utf-8",
@@ -70,6 +69,101 @@ app.get("/:tenantId/integrations", async (req, res) => {
   } catch (e) {
     console.log(e);
     res.sendStatus(400);
+  }
+});
+
+app.get("/:integrationId/:tenantId/installUrl", async (req, res) => {
+  const INTEGRATION_ID = req.params.integrationId;
+  const TENANT_ID = req.params.tenantId;
+  const HOST = req.headers.host;
+
+  try {
+    const response = await axios.post(
+      `${FUSEBIT_BASE_URL}/integration/${INTEGRATION_ID}/session`,
+      {
+        redirectUrl: `http://${HOST}/${INTEGRATION_ID}/callback`,
+        tags: {
+          "fusebit.tenantId": TENANT_ID,
+        },
+      },
+      {
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      }
+    );
+    console.log(response);
+    res.status(200);
+    res.send(response.data.targetUrl);
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(400);
+  }
+});
+
+app.get("/:integrationId/callback", async (req, res) => {
+  const INTEGRATION_ID = req.params.integrationId;
+  const SESSION_ID = req.query.session;
+
+  try {
+    const sessionPersistResponse = await axios.post(
+      `${FUSEBIT_BASE_URL}/integration/${INTEGRATION_ID}/session/${SESSION_ID}/commit`,
+      {},
+      {
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      }
+    );
+    console.log(sessionPersistResponse);
+
+    res.redirect(`/`);
+  } catch (e) {
+    console.log("Error committing Fusebit session", e);
+    res.sendStatus(500);
+  }
+});
+
+app.delete("/:integrationId/:tenantId/install", async (req, res) => {
+  // Update this with your preferred data storage
+  const INTEGRATION_ID = req.params.integrationId;
+  const TENANT_ID = req.params.tenantId;
+
+  try {
+    // Get installation
+    const lookupResponse = await axios.get(
+      `${FUSEBIT_BASE_URL}/integration/${INTEGRATION_ID}/install?tag=fusebit.tenantId=${TENANT_ID}`,
+      {
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      }
+    );
+    const installation = lookupResponse.data.items?.[0];
+    // Delete installation
+    await axios.delete(
+      `${FUSEBIT_BASE_URL}/integration/${INTEGRATION_ID}/install/${installation.id}`,
+      {
+        headers: {
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      }
+    );
+
+    res.sendStatus(200);
+  } catch (e) {
+    console.log("Error deleting Fusebit installation", e);
+    res.sendStatus(500);
   }
 });
 
