@@ -81,12 +81,13 @@ app.get("/api/:integrationId/:tenantId/installUrl", async (req, res) => {
   const INTEGRATION_ID = req.params.integrationId;
   const TENANT_ID = req.params.tenantId;
   const HOST = req.headers.host;
+  const PROTOCOL = req.secure ? "https://" : "http://";
 
   try {
     const response = await axios.post(
       `${FUSEBIT_BASE_URL}/integration/${INTEGRATION_ID}/session`,
       {
-        redirectUrl: `http://${HOST}/${INTEGRATION_ID}/callback`,
+        redirectUrl: `${PROTOCOL}${HOST}/api/${INTEGRATION_ID}/callback`,
         tags: {
           "fusebit.tenantId": TENANT_ID,
         },
@@ -100,7 +101,6 @@ app.get("/api/:integrationId/:tenantId/installUrl", async (req, res) => {
         },
       }
     );
-    console.log(response.data);
     res.status(200);
     res.send(response.data);
   } catch (e) {
@@ -126,7 +126,6 @@ app.get("/api/:integrationId/callback", async (req, res) => {
         },
       }
     );
-    console.log(sessionPersistResponse);
 
     res.redirect(`/`);
   } catch (e) {
