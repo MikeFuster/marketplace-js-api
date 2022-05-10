@@ -7,24 +7,41 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
+        <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+        <script src="index.js"></script>
     </head>
     <body>
-        <iframe id="iframe" title="iframe" src="https://marketplace-js.vercel.app/" width="700px" height="700px" frameborder="0" style="display:flex;margin:0 auto;"></iframe>
+        <div id="app"></div>
         <script>
-        document.onreadystatechange = async () => {
-            if (document.readyState === 'complete') {
-                const iframe = document.getElementById("iframe");
-                
-                const data = {
-                    tenantId: "test-tenant",
-                    integrationsApiUrl: `${window.location.origin}/api/{tenantId}/integrations`,
-                    installUrlApiUrl: `${window.location.origin}/api/{integrationId}/{tenantId}/installUrl`,
-                    uninstallApiUrl: `${window.location.origin}/api/{integrationId}/{tenantId}/install`,
-                }
+            const getIntegrations = async () => {
+                const url = "/api/test-tenant/integrations";
+                const res = await fetch(url || "");
+                const integrations = await res.json();
+                return integrations;
+            };
 
-                iframe.contentWindow.postMessage(data, "*");
+            const getInstallUrl = async (integration) => {
+                const url = `/api/${integration}/test-tenant/installUrl`;
+                const res = await fetch(url || "");
+                const install = await res.json();
+                return install.targetUrl;
+            };
+
+            const onUninstallClick = async (integration) => {
+                const url = `/api/${integration}/test-tenant/install`;
+                const res = await fetch(url || "", { method: "DELETE" });
+            };
+
+            const props = {
+                onUninstallClick: onUninstallClick,
+                getInstallUrl: getInstallUrl,
+                getIntegrations: getIntegrations,
             }
-        };
+
+            ReactDOM.render(
+                React.createElement(Marketplace, props), document.getElementById("app")  
+            );
         </script>
     </body>
 </html>
